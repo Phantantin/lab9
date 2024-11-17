@@ -1,0 +1,69 @@
+// Cấu hình repositories và các task phụ
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// Cấu hình task clean cho dự án
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+// Cấu hình buildscript cho các phụ thuộc
+buildscript {
+    ext.kotlin_version = '1.8.0' // Đảm bảo sử dụng phiên bản Kotlin mới nhất
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Cập nhật phiên bản Android Gradle Plugin nếu cần
+        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+// Cấu hình cho Android
+android {
+    namespace = "com.example.ccima" // Tên gói ứng dụng
+    compileSdk = 33 // Cập nhật API Level Android cần sử dụng
+    ndkVersion = "21.3.6528147" // Phiên bản NDK, thay đổi nếu cần
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId = "com.example.ccima" // ID ứng dụng của bạn
+        minSdk = 21 // Chỉnh lại theo yêu cầu của bạn
+        targetSdk = 33 // Đảm bảo là phiên bản chính xác
+        versionCode = 1 // Số phiên bản của ứng dụng
+        versionName = "1.0.0" // Tên phiên bản của ứng dụng
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.debug // Cấu hình cho chế độ release (có thể cần thay đổi)
+        }
+    }
+}
+
+// Cấu hình Flutter
+flutter {
+    source = "../.." // Đảm bảo đường dẫn đúng đến thư mục gốc của dự án Flutter
+}
